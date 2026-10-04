@@ -90,8 +90,29 @@ jobs:
           mkdir -p _site
           cp index.html script.js style.css firebase-init.js _site/
 
+      - name: Verify Pages artifact files
+        run: |
+          if [ ! -f firebase-init.js ]; then
+            echo "::error::Generated firebase-init.js is missing."
+            exit 1
+          fi
+          if [ ! -f _site/firebase-init.js ]; then
+            echo "::error::_site/firebase-init.js is missing."
+            exit 1
+          fi
+          if [ ! -s firebase-init.js ]; then
+            echo "::error::Generated firebase-init.js is empty."
+            exit 1
+          fi
+          if [ ! -s _site/firebase-init.js ]; then
+            echo "::error::_site/firebase-init.js is empty."
+            exit 1
+          fi
+          echo "Pages artifact files:"
+          find _site -maxdepth 2 -type f -print
+
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./_site
 
